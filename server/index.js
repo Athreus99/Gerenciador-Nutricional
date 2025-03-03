@@ -16,8 +16,17 @@ const foodRoutes = require('./routes/foods');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Middleware de CORS
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://gerenciador-nutricional.vercel.app'] // URL do frontend
+    : '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+};
+app.use(cors(corsOptions));
+
+// Outros middlewares
 app.use(express.json());
 app.use(morgan('dev'));
 
