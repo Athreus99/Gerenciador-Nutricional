@@ -1,0 +1,208 @@
+<!-- src/app/planner/planner/planner.component.html -->
+<div class="container my-4">
+    <h2 class="mb-4">Planejamento de Refeições</h2>
+    
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h3 class="m-0">Período</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="startDate" class="form-label">Data Inicial:</label>
+                <input 
+                  type="date" 
+                  id="startDate" 
+                  [(ngModel)]="startDate" 
+                  (change)="onDateRangeChange()"
+                  class="form-control">
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="endDate" class="form-label">Data Final:</label>
+                <input 
+                  type="date" 
+                  id="endDate" 
+                  [(ngModel)]="endDate" 
+                  (change)="onDateRangeChange()"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h3 class="m-0">Lista de Compras</h3>
+          </div>
+          <div class="card-body">
+            <p class="mb-3">Gere uma lista de compras baseada no seu planejamento de refeições.</p>
+            <div class="d-flex">
+              <button 
+                (click)="generateShoppingList()" 
+                class="btn btn-primary me-2" 
+                [disabled]="generatingList">
+                <span *ngIf="generatingList" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Gerar Lista de Compras
+              </button>
+              <button 
+                (click)="toggleShoppingList()" 
+                class="btn btn-outline-primary"
+                *ngIf="shoppingList.length > 0">
+                {{ showShoppingList ? 'Ocultar Lista' : 'Mostrar Lista' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Lista de Compras (se visível) -->
+    <div class="row mb-4" *ngIf="showShoppingList && shoppingList.length > 0">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="m-0">Lista de Compras</h3>
+            <button 
+              (click)="clearShoppingList()" 
+              class="btn btn-sm btn-outline-light">
+              Limpar Lista
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              @for (item of shoppingList; track item.id) {
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input 
+                          class="form-check-input" 
+                          type="checkbox" 
+                          [id]="'item-' + item.id" 
+                          [checked]="item.comprado" 
+                          (change)="onShoppingItemChange(item, $event)">
+                        <label class="form-check-label" [for]="'item-' + item.id" [class.text-decoration-line-through]="item.comprado">
+                          {{ item.nome }} - {{ item.quantidade }} {{ item.unidade }}
+                        </label>
+                      </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Formulário para adicionar refeição -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h3 class="m-0">Adicionar ao Plano</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="plannerForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-3 mb-3">
+                  <label for="data" class="form-label">Data:</label>
+                  <select id="data" formControlName="data" class="form-select">
+                    @for (day of weekDays; track day.date) {
+                      <option [value]="day.date">
+                        {{ day.name }} ({{ day.displayDate }})
+                      </option>
+                    }
+                  </select>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                  <label for="tipo_refeicao" class="form-label">Refeição:</label>
+                  <select id="tipo_refeicao" formControlName="tipo_refeicao" class="form-select">
+                    @for (mealType of mealTypes; track mealType.value) {
+                      <option [value]="mealType.value">{{ mealType.label }}</option>
+                    }
+                  </select>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label for="receita_id" class="form-label">Receita:</label>
+                  <select id="receita_id" formControlName="receita_id" class="form-select">
+                    <option [ngValue]="null" disabled>Selecione uma receita</option>
+                    @for (recipe of recipes; track recipe.id) {
+                      <option [ngValue]="recipe.id">{{ recipe.nome }}</option>
+                    }
+                  </select>
+                </div>
+                
+                <div class="col-md-2 mb-3 d-flex align-items-end">
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary w-100" 
+                    [disabled]="plannerForm.invalid">
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Planejamento Semanal -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h3 class="m-0">Plano de Refeições</h3>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-bordered m-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-center align-middle" style="width: 150px;">Refeição</th>
+                    @for (day of weekDays; track day.date) {
+                      <th class="text-center">
+                        <div>{{ day.name }}</div>
+                        <div class="small text-muted">{{ day.displayDate }}</div>
+                      </th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (mealType of mealTypes; track mealType.value) {
+                    <tr>
+                      <td class="align-middle">{{ mealType.label }}</td>
+                      @for (day of weekDays; track day.date) {
+                        <td class="plan-cell">
+                          @if (getPlannedMeals(day.date, mealType.value).length === 0) {
+                            <div class="text-center text-muted small py-2">Nenhuma refeição</div>
+                          } @else {
+                            @for (meal of getPlannedMeals(day.date, mealType.value); track meal.id) {
+                              <div class="meal-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                  <span class="meal-name">{{ getRecipeName(meal.receita_id) }}</span>
+                                  <button 
+                                    class="btn btn-sm btn-outline-danger meal-remove-btn" 
+                                    (click)="removePlannedMeal(meal.id)">
+                                    ×
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          }
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

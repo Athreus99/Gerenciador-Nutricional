@@ -1,0 +1,39 @@
+/* src/app/planner/planner/planner.component.css */
+.card {
+    margin-bottom: 20px;
+  }
+  
+  .card-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+  }
+  
+  .plan-cell {
+    min-width: 150px;
+    height: 100px;
+    vertical-align: top;
+    padding: 0.5rem;
+  }
+  
+  .meal-card {
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid #0d6efd;
+  }
+  
+  .meal-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .meal-remove-btn {
+    padding: 0 0.5rem;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  
+  .form-check-label.text-decoration-line-through {
+    color: #6c757d;
+  }

@@ -1,0 +1,152 @@
+<div class="container">
+  <h2 class="my-4">Diário Alimentar</h2>
+  
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="date">Data:</label>
+        <input 
+          type="date" 
+          id="date" 
+          class="form-control" 
+          [value]="selectedDate" 
+          (change)="onDateChange($event)">
+      </div>
+    </div>
+  </div>
+  
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h3 class="m-0">Resumo do Dia</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3"><strong>Calorias:</strong> <span class="ms-2">{{ dailySummary.totalCalorias }} kcal</span></div>
+        <div class="col-md-3"><strong>Proteínas:</strong> <span class="ms-2">{{ dailySummary.totalProteinas }}g</span></div>
+        <div class="col-md-3"><strong>Carboidratos:</strong> <span class="ms-2">{{ dailySummary.totalCarboidratos }}g</span></div>
+        <div class="col-md-3"><strong>Gorduras:</strong> <span class="ms-2">{{ dailySummary.totalGorduras }}g</span></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card mb-4">
+    <div class="card-header">
+      <h3 class="m-0">Adicionar ao Diário</h3>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="diaryForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group mb-3">
+              <label for="tipo_refeicao">Refeição:</label>
+              <select id="tipo_refeicao" formControlName="tipo_refeicao" class="form-control">
+                @for (mealType of mealTypes; track mealType.value) {
+                  <option [value]="mealType.value">{{ mealType.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          
+          <div class="col-md-3">
+            <div class="form-group mb-3">
+              <label for="item_tipo">Tipo de Item:</label>
+              <select id="item_tipo" formControlName="item_tipo" class="form-control" (change)="onItemTypeChange(diaryForm.get('item_tipo')?.value)">
+                <option value="alimento">Alimento</option>
+                <option value="receita">Receita</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <!-- Corrigido: usando @if como bloco e não como atributo -->
+          @if (diaryForm.get('item_tipo')?.value === 'alimento') {
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="alimento_id">Alimento:</label>
+                <select id="alimento_id" formControlName="alimento_id" class="form-control">
+                  <option [ngValue]="null" disabled>Selecione um alimento</option>
+                  @for (food of foods; track food.id) {
+                    <option [ngValue]="food.id">{{ food.nome }} ({{ food.calorias }} kcal/{{ food.porcao }})</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+          
+          <!-- Corrigido: usando @if como bloco e não como atributo -->
+          @if (diaryForm.get('item_tipo')?.value === 'receita') {
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="receita_id">Receita:</label>
+                <select id="receita_id" formControlName="receita_id" class="form-control">
+                  <option [ngValue]="null" disabled>Selecione uma receita</option>
+                  @for (recipe of recipes; track recipe.id) {
+                    <option [ngValue]="recipe.id">{{ recipe.nome }} ({{ recipe.calorias_totais }} kcal/porção)</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
+          
+          <div class="col-md-2">
+            <div class="form-group mb-3">
+              <label for="quantidade">Quantidade:</label>
+              <input type="number" id="quantidade" formControlName="quantidade" class="form-control" step="0.1" min="0.1">
+            </div>
+          </div>
+          
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100" 
+              [disabled]="diaryForm.invalid || 
+              (diaryForm.get('item_tipo')?.value === 'alimento' && !diaryForm.get('alimento_id')?.value) || 
+              (diaryForm.get('item_tipo')?.value === 'receita' && !diaryForm.get('receita_id')?.value)">
+              Adicionar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Seções de Refeições -->
+  @for (mealTypeObj of mealTypes; track mealTypeObj.value) {
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="m-0">{{ mealTypeObj.label }}</h3>
+      </div>
+      <div class="card-body">
+        @if (!hasMealTypeEntries(mealTypeObj.value)) {
+          <p class="text-muted">Nenhum item registrado para esta refeição</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Tipo</th>
+                  <th>Quantidade</th>
+                  <th>Calorias</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (entry of getEntriesByMealType(mealTypeObj.value); track entry.id) {
+                  <tr>
+                    <td>{{ entry.alimento_nome }}</td>
+                    <td><span class="badge" [class.bg-info]="!isRecipe(entry)" [class.bg-success]="isRecipe(entry)">{{ isRecipe(entry) ? 'Receita' : 'Alimento' }}</span></td>
+                    <td>{{ entry.quantidade }} {{ isRecipe(entry) ? 'porções' : 'porções' }}</td>
+                    <td>{{ entry.calorias }} kcal</td>
+                    <td>
+                      <button class="btn btn-sm btn-danger" (click)="deleteEntry(entry.id)">Remover</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

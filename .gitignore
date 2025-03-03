@@ -1,0 +1,22 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular
+/client/dist
+/client/.angular
+
+# Arquivos de ambiente
+.env
+.env.local
+
+# Banco de dados SQLite
+*.db
+/data/*.db
+/backups/*.db
+
+# Outros
+.DS_Store
+.idea/
+.vscode/

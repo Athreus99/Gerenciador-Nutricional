@@ -1,0 +1,79 @@
+.welcome-card {
+    border-radius: 10px;
+  }
+  
+  .nutrition-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+  }
+  
+  .weekday-bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 250px;
+  }
+  
+  .weekday-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 14.28%;
+  }
+  
+  .weekday-label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .weekday-bar-container {
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+    width: 30px;
+  }
+  
+  .weekday-bar {
+    width: 100%;
+    background-color: #6c757d;
+    border-radius: 4px 4px 0 0;
+  }
+  
+  .weekday-value {
+    margin-top: 6px;
+    font-size: 0.8rem;
+  }
+  
+  .good-calories {
+    background-color: #28a745;
+  }
+  
+  .medium-calories {
+    background-color: #ffc107;
+  }
+  
+  .high-calories {
+    background-color: #dc3545;
+  }
+  
+  .meta-boa {
+    background-color: #28a745;
+  }
+  
+  .meta-media {
+    background-color: #ffc107;
+  }
+  
+  .meta-baixa {
+    background-color: #dc3545;
+  }
+  
+  .card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  .meal-item-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }

@@ -1,0 +1,170 @@
+<div class="container my-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="m-0">{{ mode === 'create' ? 'Nova Receita' : 'Editar Receita' }}</h2>
+      </div>
+      
+      <div class="card-body">
+        @if (loading) {
+          <div class="text-center p-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2">Carregando dados da receita...</p>
+          </div>
+        } @else {
+          <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+            <!-- Informações Básicas -->
+            <div class="mb-4">
+              <h3>Informações Básicas</h3>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="nome" class="form-label">Nome da Receita *</label>
+                  <input type="text" id="nome" formControlName="nome" class="form-control" placeholder="Ex: Salada de Frutas">
+                  @if (recipeForm.get('nome')?.invalid && recipeForm.get('nome')?.touched) {
+                    <div class="text-danger mt-1">
+                      @if (recipeForm.get('nome')?.errors?.['required']) {
+                        <small>Nome é obrigatório</small>
+                      } @else if (recipeForm.get('nome')?.errors?.['minlength']) {
+                        <small>Nome deve ter pelo menos 3 caracteres</small>
+                      }
+                    </div>
+                  }
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label for="tipo_refeicao" class="form-label">Tipo de Refeição *</label>
+                  <select id="tipo_refeicao" formControlName="tipo_refeicao" class="form-select">
+                    @for (type of mealTypes; track type.value) {
+                      <option [value]="type.value">{{ type.label }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label for="descricao" class="form-label">Descrição *</label>
+                  <textarea id="descricao" formControlName="descricao" class="form-control" rows="3" placeholder="Descreva brevemente a receita"></textarea>
+                  @if (recipeForm.get('descricao')?.invalid && recipeForm.get('descricao')?.touched) {
+                    <div class="text-danger mt-1">
+                      @if (recipeForm.get('descricao')?.errors?.['required']) {
+                        <small>Descrição é obrigatória</small>
+                      } @else if (recipeForm.get('descricao')?.errors?.['minlength']) {
+                        <small>Descrição deve ter pelo menos 10 caracteres</small>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="tempo_preparo" class="form-label">Tempo de Preparo (min) *</label>
+                  <input type="number" id="tempo_preparo" formControlName="tempo_preparo" class="form-control" min="1">
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label for="porcoes" class="form-label">Porções *</label>
+                  <input type="number" id="porcoes" formControlName="porcoes" class="form-control" min="1">
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label for="calorias_totais" class="form-label">Calorias (por porção) *</label>
+                  <input type="number" id="calorias_totais" formControlName="calorias_totais" class="form-control" min="0">
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <label for="imagem_url" class="form-label">URL da Imagem *</label>
+                  <input type="text" id="imagem_url" formControlName="imagem_url" class="form-control" placeholder="Ex: assets/images/minha-receita.png">
+                  <small class="text-muted">Use o caminho "assets/images/nome-da-imagem.png" para imagens na pasta assets.</small>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Ingredientes -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>Ingredientes</h3>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addIngredient()">+ Adicionar Ingrediente</button>
+              </div>
+              
+              <div formArrayName="ingredientes">
+                @for (ingrediente of ingredientes.controls; track $index) {
+                  <div [formGroupName]="$index" class="row align-items-end mb-2">
+                    <div class="col-md-5 mb-2">
+                      <label [for]="'ingrediente-nome-' + $index" class="form-label">Nome *</label>
+                      <input type="text" [id]="'ingrediente-nome-' + $index" formControlName="nome" class="form-control" placeholder="Ex: Farinha">
+                    </div>
+                    
+                    <div class="col-md-2 mb-2">
+                      <label [for]="'ingrediente-quantidade-' + $index" class="form-label">Quantidade *</label>
+                      <input type="number" [id]="'ingrediente-quantidade-' + $index" formControlName="quantidade" class="form-control" min="0.1" step="0.1">
+                    </div>
+                    
+                    <div class="col-md-3 mb-2">
+                      <label [for]="'ingrediente-unidade-' + $index" class="form-label">Unidade *</label>
+                      <select [id]="'ingrediente-unidade-' + $index" formControlName="unidade" class="form-select">
+                        @for (unit of unitOptions; track unit) {
+                          <option [value]="unit">{{ unit }}</option>
+                        }
+                      </select>
+                    </div>
+                    
+                    <div class="col-md-2 mb-2">
+                      <button type="button" class="btn btn-sm btn-outline-danger w-100" (click)="removeIngredient($index)" [disabled]="ingredientes.length <= 1">
+                        Remover
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+            
+            <!-- Modo de Preparo -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>Modo de Preparo</h3>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addStep()">+ Adicionar Passo</button>
+              </div>
+              
+              <div formArrayName="modo_preparo">
+                @for (step of modoPreparo.controls; track $index) {
+                  <div [formGroupName]="$index" class="row mb-2">
+                    <div class="col-md-10">
+                      <div class="d-flex align-items-start">
+                        <span class="step-number me-2">{{ $index + 1 }}.</span>
+                        <textarea formControlName="instrucao" class="form-control" rows="2" placeholder="Descreva o passo"></textarea>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-2">
+                      <button type="button" class="btn btn-sm btn-outline-danger w-100" (click)="removeStep($index)" [disabled]="modoPreparo.length <= 1">
+                        Remover
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+            
+            @if (errorMessage) {
+              <div class="alert alert-danger">{{ errorMessage }}</div>
+            }
+            
+            <div class="d-flex justify-content-between mt-4">
+              <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="submitting">
+                @if (submitting) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                }
+                {{ mode === 'create' ? 'Salvar Receita' : 'Atualizar Receita' }}
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  </div>

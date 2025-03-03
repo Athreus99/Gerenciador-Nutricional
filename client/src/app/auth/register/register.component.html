@@ -1,0 +1,87 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-center">Registrar</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+              <div class="form-group mb-3">
+                <label for="nome">Nome</label>
+                <input 
+                  type="text" 
+                  id="nome" 
+                  formControlName="nome" 
+                  class="form-control" 
+                  placeholder="Seu nome completo">
+                <div *ngIf="registerForm.get('nome')?.touched && registerForm.get('nome')?.invalid" class="text-danger">
+                  <small *ngIf="registerForm.get('nome')?.errors?.['required']">Nome é obrigatório</small>
+                  <small *ngIf="registerForm.get('nome')?.errors?.['minlength']">Nome deve ter pelo menos 3 caracteres</small>
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  formControlName="email" 
+                  class="form-control" 
+                  placeholder="Seu email">
+                <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger">
+                  <small *ngIf="registerForm.get('email')?.errors?.['required']">Email é obrigatório</small>
+                  <small *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido</small>
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="senha">Senha</label>
+                <input 
+                  type="password" 
+                  id="senha" 
+                  formControlName="senha" 
+                  class="form-control" 
+                  placeholder="Sua senha">
+                <div *ngIf="registerForm.get('senha')?.touched && registerForm.get('senha')?.invalid" class="text-danger">
+                  <small *ngIf="registerForm.get('senha')?.errors?.['required']">Senha é obrigatória</small>
+                  <small *ngIf="registerForm.get('senha')?.errors?.['minlength']">A senha deve ter pelo menos 6 caracteres</small>
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="confirmarSenha">Confirmar Senha</label>
+                <input 
+                  type="password" 
+                  id="confirmarSenha" 
+                  formControlName="confirmarSenha" 
+                  class="form-control" 
+                  placeholder="Confirme sua senha">
+                <div *ngIf="registerForm.get('confirmarSenha')?.touched && registerForm.get('confirmarSenha')?.invalid" class="text-danger">
+                  <small *ngIf="registerForm.get('confirmarSenha')?.errors?.['required']">Confirmação de senha é obrigatória</small>
+                  <small *ngIf="registerForm.get('confirmarSenha')?.errors?.['mustMatch']">As senhas não coincidem</small>
+                </div>
+              </div>
+              
+              <div *ngIf="errorMessage" class="alert alert-danger">
+                {{ errorMessage }}
+              </div>
+              
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary" 
+                  [disabled]="registerForm.invalid">
+                  Registrar
+                </button>
+              </div>
+              
+              <div class="text-center mt-3">
+                <p>Já tem uma conta? <a routerLink="/login">Fazer login</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

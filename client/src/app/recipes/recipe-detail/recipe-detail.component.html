@@ -1,0 +1,86 @@
+<div class="container my-4">
+    @if (loading) {
+      <div class="text-center p-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-2">Carregando detalhes da receita...</p>
+      </div>
+    } @else if (error) {
+      <div class="alert alert-danger">
+        {{ error }}
+        <button class="btn btn-outline-primary mt-3" (click)="goBack()">Voltar para a lista de receitas</button>
+      </div>
+    } @else if (recipe) {
+      <div class="card shadow">
+        <div class="card-body p-0">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img [src]="getImageUrl(recipe.imagem_url)" class="img-fluid recipe-detail-image" alt="{{ recipe.nome }}">
+            </div>
+            <div class="col-md-8">
+              <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h1 class="card-title mb-0">{{ recipe.nome }}</h1>
+                  <span class="badge bg-primary">{{ getMealTypeLabel(recipe.tipo_refeicao) }}</span>
+                </div>
+                
+                <p class="card-text mb-4">{{ recipe.descricao }}</p>
+                
+                <div class="row recipe-info mb-4">
+                  <div class="col-md-3 text-center">
+                    <div class="info-icon"><i class="bi bi-clock"></i></div>
+                    <div class="info-label">Tempo de Preparo</div>
+                    <div class="info-value">{{ recipe.tempo_preparo }} min</div>
+                  </div>
+                  <div class="col-md-3 text-center">
+                    <div class="info-icon"><i class="bi bi-fire"></i></div>
+                    <div class="info-label">Calorias</div>
+                    <div class="info-value">{{ recipe.calorias_totais }} kcal</div>
+                  </div>
+                  <div class="col-md-3 text-center">
+                    <div class="info-icon"><i class="bi bi-people"></i></div>
+                    <div class="info-label">Porções</div>
+                    <div class="info-value">{{ recipe.porcoes }}</div>
+                  </div>
+                  <div class="col-md-3 text-center">
+                    <div class="info-icon"><i class="bi bi-list-check"></i></div>
+                    <div class="info-label">Ingredientes</div>
+                    <div class="info-value">{{ recipe.ingredientes.length }}</div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <h3>Ingredientes</h3>
+                    <ul class="list-group list-group-flush">
+                      @for (ingredient of recipe.ingredientes; track ingredient.id) {
+                        <li class="list-group-item">
+                          <span class="fw-semibold">{{ ingredient.nome }}:</span> 
+                          {{ ingredient.quantidade }} {{ ingredient.unidade }}
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <h3>Modo de Preparo</h3>
+                    <ol class="list-group list-group-flush list-group-numbered">
+                      @for (step of recipe.modo_preparo; track $index) {
+                        <li class="list-group-item">{{ step }}</li>
+                      }
+                    </ol>
+                  </div>
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between">
+                  <button class="btn btn-outline-secondary" (click)="goBack()">Voltar</button>
+                  <a [routerLink]="['/recipes', recipe.id, 'edit']" class="btn btn-primary">Editar Receita</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>

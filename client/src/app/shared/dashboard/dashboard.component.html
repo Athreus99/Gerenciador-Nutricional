@@ -1,0 +1,135 @@
+<div class="container">
+    <div class="row my-4">
+      <div class="col-md-12">
+        <div class="welcome-card p-4 bg-primary text-white rounded shadow">
+          <h2>Bem-vindo, {{ username }}!</h2>
+          <p class="mb-0">Hoje é {{ todayDate }}. Aqui está um resumo do seu progresso.</p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-header">
+            <h3>Resumo de Hoje</h3>
+          </div>
+          <div class="card-body">
+            <div class="progress mb-3" style="height: 25px;">
+              <div 
+                class="progress-bar" 
+                [ngClass]="getMetaClass()"
+                role="progressbar" 
+                [style.width.%]="currentDaySummary.metaAlcancada" 
+                aria-valuenow="currentDaySummary.metaAlcancada" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+                {{ currentDaySummary.metaAlcancada }}% da meta diária
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="nutrition-item mb-2">
+                  <strong>Calorias:</strong>
+                  <span class="float-end">{{ currentDaySummary.totalCalorias }} kcal</span>
+                </div>
+                <div class="nutrition-item mb-2">
+                  <strong>Proteínas:</strong>
+                  <span class="float-end">{{ currentDaySummary.totalProteinas }}g</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="nutrition-item mb-2">
+                  <strong>Carboidratos:</strong>
+                  <span class="float-end">{{ currentDaySummary.totalCarboidratos }}g</span>
+                </div>
+                <div class="nutrition-item mb-2">
+                  <strong>Gorduras:</strong>
+                  <span class="float-end">{{ currentDaySummary.totalGorduras }}g</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-3">
+              <a routerLink="/diary" class="btn btn-primary">Ir para o Diário</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-header">
+            <h3>Calorias da Semana</h3>
+          </div>
+          <div class="card-body">
+            <div class="weekday-bars">
+              @for (day of weeklyCalories; track day.day) {
+                <div class="weekday-item">
+                  <div class="weekday-label">{{ day.day }}</div>
+                  <div class="weekday-bar-container">
+                    <div 
+                      class="weekday-bar" 
+                      [ngClass]="getWeekdayClass(day.value)"
+                      [style.height.px]="day.value / 10">
+                    </div>
+                  </div>
+                  <div class="weekday-value">{{ day.value }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="m-0">Refeições Recentes</h3>
+            <a routerLink="/diary" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+          </div>
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+              @for (meal of recentMeals; track meal.id) {
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-1">{{ meal.nome }} <small class="text-muted">{{ meal.data }}</small></h5>
+                    <span class="badge bg-primary rounded-pill">{{ meal.calorias }} kcal</span>
+                  </div>
+                  <p class="mb-1">{{ meal.itens.join(', ') }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="m-0">Receitas Sugeridas</h3>
+            <a routerLink="/recipes" class="btn btn-sm btn-outline-primary">Ver Mais</a>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              @for (recipe of suggestedRecipes; track recipe.id) {
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100">
+                    <img [src]="recipe.imagem" class="card-img-top" alt="{{ recipe.nome }}">
+                    <div class="card-body p-2">
+                      <h6 class="card-title mb-1">{{ recipe.nome }}</h6>
+                      <div class="small">
+                        <span><i class="bi bi-fire"></i> {{ recipe.calorias }} kcal</span>
+                        <span class="ms-2"><i class="bi bi-clock"></i> {{ recipe.tempo }} min</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
