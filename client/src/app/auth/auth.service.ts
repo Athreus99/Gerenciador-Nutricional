@@ -20,7 +20,7 @@ interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://gerenciador-nutricional.onrender.com';
+  private apiUrl = 'https://gerenciador-nutricional.onrender.com/api/auth';
   
   constructor(private http: HttpClient) { }
   
@@ -28,8 +28,8 @@ export class AuthService {
     return this.http.post<{message: string}>(`${this.apiUrl}/register`, user);
   }
   
-  login(credentials: {email: string, senha: string}): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
           localStorage.setItem('token', response.token);
