@@ -18,11 +18,13 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware de CORS
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? ['https://gerenciador-nutricional.vercel.app'] // URL do frontend
-    : '*',
+  origin: [
+    'https://gerenciador-nutricional.vercel.app', 
+    'http://localhost:4200'  // para desenvolvimento local
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 
