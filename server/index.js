@@ -39,6 +39,11 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/planner', plannerRoutes);
 app.use('/api/foods', foodRoutes);
 
+// Nova rota de saúde da API
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'API está funcionando!' });
+});
+
 // Inicializar banco de dados
 function initDb() {
   return new Promise((resolve, reject) => {
