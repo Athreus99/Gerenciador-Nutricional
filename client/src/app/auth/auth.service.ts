@@ -20,7 +20,7 @@ interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = 'https://gerenciador-nutricional.onrender.com';
   
   constructor(private http: HttpClient) { }
   
